@@ -1,0 +1,10 @@
+{
+  "name": "atividade-qualidade-agua",
+  "version": "1.0.0",
+  "description": "Atividade de Qualidade de Software: código gerado por IA sob inspeção",
+  "main": "src/agua.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
