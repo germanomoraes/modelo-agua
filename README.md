@@ -1,8 +1,8 @@
 # Código da IA sob inspeção: Fatura de Água da Associação Comunitária
 
-**Dupla:** [nome do estudante A] e [nome do estudante B]
+**Dupla:** Rony e Germano
 **Disciplina:** Qualidade de Software, ADS, IFCE Campus Boa Viagem
-**Ferramenta de IA usada:** [ex.: ChatGPT, Claude, Gemini, Copilot]
+**Ferramenta de IA usada:**  Claude
 
 > Apaguem as instruções em itálico ao preencher. Sigam as partes **na ordem**. A Parte 3 só começa quando o professor publicar o depoimento no Classroom.
 
@@ -24,13 +24,17 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 ## Parte 1: o código gerado pela IA (feita em sala)
 
-*Enviem à IA apenas o conteúdo de `requisitos.md` e peçam a implementação completa das quatro funções. Colem o código em `src/agua.js` **sem alterar nada** e façam um commit com a mensagem "Código original gerado pela IA".*
-
-- **Link do commit com o código original:** [link]
-- **A IA fez alguma pergunta ou apontou alguma ambiguidade antes de implementar?** [sim ou não; se sim, quais]
-- **Que decisões a IA tomou sozinha, sem perguntar?** *(ex.: como arredondar, como tratar datas, o que fazer com entradas inválidas)*
-
-[escrevam aqui]
+- **Link do commit com o código original:** https://github.com/germanomoraes/modelo-agua/commit/a7ce2ab
+  (tentativa anterior, commit de2acfc: pedido só com 2 funções, descartado por não cobrir as 4 funções da especificação)
+- **A IA fez alguma pergunta ou apontou alguma ambiguidade antes de implementar?** não
+- **Que decisões a IA tomou sozinha, sem perguntar?**
+  - Entradas inválidas: lança erro (RangeError/TypeError) para leituras fora de 0 a 9999, decimais ou texto, consumo negativo ou decimal, valor negativo e datas fora do formato.
+  - Dinheiro calculado em centavos inteiros, para evitar erro de ponto flutuante.
+  - Datas tratadas em UTC.
+  - `pagamento` ausente (undefined ou null) significa sem encargos; string vazia lança erro.
+  - `gerarFatura` não valida `nome`, e não valida `vencimento` quando não há pagamento.
+  - Valor com fração de centavo é arredondado em silêncio (10.005 vira 10,00).
+  - Feriados não são tratados, apenas sábado e domingo.
 
 ## Parte 2: verificação
 
@@ -40,8 +44,8 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 | Integrante | Funções sob sua responsabilidade |
 |---|---|
-| [estudante A] | [função 1] e [função 2] |
-| [estudante B] | [função 3] e [função 4] |
+| Rony | calcularConsumo e calcularEncargos |
+| [estudante B] | calcularTarifa e gerarFatura |
 
 ### 2.2 Casos de teste
 
@@ -49,10 +53,30 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 | ID | Função | Requisito | Entrada | Resultado esperado | Resultado obtido (código da IA) | Passou? |
 |---|---|---|---|---|---|---|
-| CT01 | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
-| ... | | | | | | |
+| CC01 | calcularConsumo | RF02 | (0, 0) | 0 | 0 | Sim |
+| CC02 | calcularConsumo | RF03 | (500, 500) | 0 | 0 | Sim |
+| CC03 | calcularConsumo | RF03 | (9990, 10) | 20 | 20 | Sim |
+| CC04 | calcularConsumo | RF03 | (9999, 0) | 1 | 1 | Sim |
+| CC05 | calcularConsumo | RF01 | (0, 9999) | 9999 | 9999 | Sim |
+| CC06 | calcularConsumo | RF01 (lacuna) | (-1, 10) | lança erro | RangeError | Sim |
+| CC07 | calcularConsumo | RF01 (lacuna) | (10.5, 20) | lança erro | RangeError | Sim |
+| CC08 | calcularConsumo | RF01 (lacuna) | (0, 10000) | lança erro | RangeError | Sim |
+| CE01 | calcularEncargos | RF08 | (100, 2026-10-15, 2026-10-15) | {0, 0} | {0, 0} | Sim |
+| CE02 | calcularEncargos | RF08 | (100, 2026-10-15, 2026-10-14) | {0, 0} | {0, 0} | Sim |
+| CE03 | calcularEncargos | RF10 | (100, 2026-10-15, 2026-10-16) | {2, 0.03} | {2, 0.03} | Sim |
+| CE04 | calcularEncargos | RF10 | (100, 2026-10-15, 2026-10-25) | {2, 0.33} | {2, 0.33} | Sim |
+| CE05 | calcularEncargos | RF09 | (100, 2026-10-17, 2026-10-19) | {0, 0} | {0, 0} | Sim |
+| CE06 | calcularEncargos | RF09, RF10 | (100, 2026-10-17, 2026-10-20) | {2, 0.10} | {2, 0.1} | Sim |
+| CE07 | calcularEncargos | RF09, RF10 | (100, 2026-10-18, 2026-10-20) | {2, 0.07} | {2, 0.07} | Sim |
+| CE08 | calcularEncargos | RF11 | (50, 2026-10-15, 2026-10-25) | {1, 0.17} | {1, 0.17} | Sim |
+| CE09 | calcularEncargos | RF11 | (26.75, 2026-10-15, 2026-10-16) | {0.54, 0.01} | {0.54, 0.01} | Sim |
+| CE10 | calcularEncargos | RF10 | (100, 2026-12-31, 2027-01-04) | {2, 0.13} | {2, 0.13} | Sim |
+| CE11 | calcularEncargos | RF10 | (100, 2028-02-28, 2028-03-01) | {2, 0.07} | {2, 0.07} | Sim |
+| CE12 | calcularEncargos | RF09 | (100, 2026-10-16, 2026-10-17) | {2, 0.03} | {2, 0.03} | Sim |
+| CE13 | calcularEncargos | RF10 | (0, 2026-10-15, 2026-10-20) | {0, 0} | {0, 0} | Sim |
+| [estudante B] | calcularTarifa e gerarFatura | [ ] | [ ] | [ ] | [ ] | [ ] |
 
-**Resultado:** [X] de [Y] testes falharam no código original.
+**Resultado:** nas funções do Rony, 0 de 21 testes falharam no código original. Total da dupla: [X] de [Y] testes falharam no código original.
 
 ### 2.3 Revisão cruzada dos testes
 
@@ -60,20 +84,26 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 | Revisor | O que encontrou nos testes do colega | O que mudou |
 |---|---|---|
-| [estudante A] | [ ] | [ ] |
+| Rony | [ ] | [ ] |
 | [estudante B] | [ ] | [ ] |
 
 ### 2.4 Defeitos encontrados
 
+Funções do Rony (calcularConsumo e calcularEncargos): nenhum defeito encontrado nos casos executados. Foram identificadas lacunas da especificação (entradas inválidas, `pagamento` vazio, feriados), tratadas como decisões na seção 2.5, e não como defeitos.
+
 | # | Função | Defeito (causa no código) | Falha (sintoma) | Requisito violado |
 |---|---|---|---|---|
-| D1 | [ ] | [ ] | [ ] | [ ] |
+| D1 | [estudante B: preencher, se houver] | [ ] | [ ] | [ ] |
 
 ### 2.5 Correções
 
-*Corrijam os defeitos em commits separados (de preferência um por defeito) e expliquem cada correção. Lacunas da especificação (casos que ela não define) exigem uma **decisão** da dupla: registrem a decisão e a justificativa. Ao final, todos os testes da dupla devem passar.*
+Funções do Rony: nenhum defeito exigiu correção em calcularConsumo e calcularEncargos. Decisões da dupla sobre as lacunas da especificação:
 
-[escrevam aqui]
+- **Entradas inválidas** (leitura negativa, decimal ou acima de 9999; valor ou data inválidos): mantém-se o comportamento da IA, que lança erro. Justificativa: devolver um valor silencioso geraria cobrança errada ao morador, e um erro explícito evidencia o problema de leitura ou digitação.
+- **`pagamento` como string vazia ou data inválida:** lança erro (mantido).
+- **Feriados:** não tratados. Fica como limitação conhecida, pois a especificação só prevê sábado e domingo (RF09).
+
+[estudante B: correções e decisões de calcularTarifa e gerarFatura]
 
 ### 2.6 Os testes da IA
 
@@ -141,14 +171,14 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 **Reflexão final (1 parágrafo por integrante):**
 
-- **[estudante A]:** *Como você passaria a usar IA para gerar código depois desta atividade?*
+- **Rony:** *Como você passaria a usar IA para gerar código depois desta atividade?*
 - **[estudante B]:** *Idem.*
 
 ## Parte 7: divisão do trabalho
 
 | Parte | Responsável principal | Participação do outro integrante |
 |---|---|---|
-| Parte 1 | [ ] | [ ] |
-| Parte 2 | [ ] | [ ] |
+| Parte 1 | Rony | [ ] |
+| Parte 2 | Rony (calcularConsumo e calcularEncargos) e [estudante B] (calcularTarifa e gerarFatura) | [ ] |
 | Parte 3 | [ ] | [ ] |
 | Partes 4 a 6 | [ ] | [ ] |
