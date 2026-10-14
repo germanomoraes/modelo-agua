@@ -1,38 +1,53 @@
 'use strict';
 
 /**
- * Converte "AAAA-MM-DD" em dias inteiros desde 1970-01-01 (UTC).
- * Trabalhar em UTC evita erros por fuso horário e horário de verão.
+ * Gestão de Água da Associação Comunitária do Sítio Lagoa Seca
+ * Módulo: cálculo da fatura mensal de água.
+ *
+ * Os cálculos em dinheiro são feitos em centavos (inteiros) para evitar
+ * erros de ponto flutuante e só convertidos para reais na saída.
  */
-function dataParaDias(texto) {
+
+const LEITURA_MAXIMA = 9999;
+const VOLTA_HIDROMETRO = LEITURA_MAXIMA + 1; // 10000
+
+// Tarifas em centavos
+const TAXA_MINIMA = 1500;
+const FAIXA_1_LIMITE = 10;
+const FAIXA_2_LIMITE = 20;
+const PRECO_FAIXA_2 = 235;
+const PRECO_FAIXA_3 = 315;
+
+const MS_POR_DIA = 24 * 60 * 60 * 1000;
+
+function validarLeitura(valor, nome) {
+  if (!Number.isInteger(valor) || valor < 0 || valor > LEITURA_MAXIMA) {
+    throw new RangeError(`${nome} deve ser um inteiro entre 0 e ${LEITURA_MAXIMA}`);
+  }
+}
+
+/** Converte "AAAA-MM-DD" em timestamp UTC (meia-noite), validando a data. */
+function paraTimestamp(texto, nome) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(texto);
   if (!m) {
-    throw new TypeError(`Data inválida: "${texto}". Use o formato AAAA-MM-DD.`);
+    throw new TypeError(`${nome} deve estar no formato "AAAA-MM-DD"`);
   }
   const [ano, mes, dia] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const ms = Date.UTC(ano, mes - 1, dia);
-  const d = new Date(ms);
-  // Rejeita datas inexistentes, como 2026-02-30
+  const ts = Date.UTC(ano, mes - 1, dia);
+  const d = new Date(ts);
   if (d.getUTCFullYear() !== ano || d.getUTCMonth() !== mes - 1 || d.getUTCDate() !== dia) {
-    throw new RangeError(`Data inexistente: "${texto}".`);
+    throw new RangeError(`${nome} não é uma data válida: ${texto}`);
   }
-  return ms / 86400000;
+  return ts;
 }
 
-/** Dia da semana de um número de dias desde 1970 (0 = domingo ... 6 = sábado). */
-function diaDaSemana(dias) {
-  return new Date(dias * 86400000).getUTCDay();
-}
-
-/** Divisão inteira arredondada "meio para cima" (só com inteiros, sem erro de ponto flutuante). */
+/** Divisão inteira arredondando "meio para cima" (para valores não negativos). */
 function dividirArredondando(numerador, denominador) {
   return Math.floor((2 * numerador + denominador) / (2 * denominador));
 }
 
-function validarLeitura(valor, nome) {
-  if (!Number.isInteger(valor) || valor < 0 || valor > 9999) {
-    throw new RangeError(`${nome} deve ser um inteiro de 0 a 9999. Recebido: ${valor}`);
-  }
+function emReais(centavos) {
+  return centavos / 100;
 }
 
 /**
@@ -45,48 +60,86 @@ function calcularConsumo(leituraAnterior, leituraAtual) {
   if (leituraAtual >= leituraAnterior) {
     return leituraAtual - leituraAnterior;
   }
-  // Completou uma volta: o hidrômetro tem 10000 posições (0 a 9999)
-  return 10000 - leituraAnterior + leituraAtual;
+  return VOLTA_HIDROMETRO - leituraAnterior + leituraAtual;
 }
 
 /**
- * RF08–RF12: multa de 2% e juros de 0,033% ao dia, ambos arredondados
- * separadamente ao centavo (meio para cima).
- * Retorna { multa, juros } em reais.
+ * RF04–RF07: valor da água em reais, por faixas.
+ */
+function calcularTarifa(consumo) {
+  if (!Number.isInteger(consumo) || consumo < 0) {
+    throw new RangeError('consumo deve ser um inteiro não negativo');
+  }
+
+  let centavos = TAXA_MINIMA;
+
+  if (consumo > FAIXA_1_LIMITE) {
+    const naFaixa2 = Math.min(consumo, FAIXA_2_LIMITE) - FAIXA_1_LIMITE;
+    centavos += naFaixa2 * PRECO_FAIXA_2;
+  }
+  if (consumo > FAIXA_2_LIMITE) {
+    centavos += (consumo - FAIXA_2_LIMITE) * PRECO_FAIXA_3;
+  }
+
+  return emReais(centavos);
+}
+
+/**
+ * RF08–RF12: multa (2%) e juros (0,033% ao dia corrido) em caso de atraso.
  */
 function calcularEncargos(valor, vencimento, pagamento) {
   if (typeof valor !== 'number' || !Number.isFinite(valor) || valor < 0) {
-    throw new RangeError(`Valor inválido: ${valor}`);
+    throw new RangeError('valor deve ser um número não negativo');
   }
 
-  const diasVenc = dataParaDias(vencimento);
-  const diasPag = dataParaDias(pagamento);
+  const venc = paraTimestamp(vencimento, 'vencimento');
+  const pag = paraTimestamp(pagamento, 'pagamento');
 
-  // RF09: vencimento em fim de semana prorroga o prazo para a segunda-feira
-  let limite = diasVenc;
-  const dow = diaDaSemana(diasVenc);
-  if (dow === 6) limite += 2;      // sábado -> segunda
-  else if (dow === 0) limite += 1; // domingo -> segunda
+  // RF09: vencimento em fim de semana prorroga para a segunda-feira seguinte.
+  const diaSemana = new Date(venc).getUTCDay(); // 0 = domingo, 6 = sábado
+  let limite = venc;
+  if (diaSemana === 6) limite = venc + 2 * MS_POR_DIA;
+  else if (diaSemana === 0) limite = venc + 1 * MS_POR_DIA;
 
-  // RF08: pagamento dentro do prazo, sem encargos
-  if (diasPag <= limite) {
+  // RF08
+  if (pag <= limite) {
     return { multa: 0, juros: 0 };
   }
 
-  // RF10: dias corridos contados a partir do vencimento ORIGINAL
-  const diasAtraso = diasPag - diasVenc;
+  // RF10: dias corridos contados a partir do vencimento original.
+  const diasAtraso = Math.round((pag - venc) / MS_POR_DIA);
+  const valorCentavos = Math.round(valor * 100);
 
-  const centavos = Math.round(valor * 100);
+  // multa = valor * 2%  |  juros = valor * 0,033% * dias  (0,033% = 33/100000)
+  const multa = dividirArredondando(valorCentavos * 2, 100);
+  const juros = dividirArredondando(valorCentavos * diasAtraso * 33, 100000);
 
-  // multa = 2% do valor        -> centavos * 2 / 100
-  const multaCentavos = dividirArredondando(centavos * 2, 100);
-  // juros = 0,033% por dia     -> centavos * 33 * dias / 100000
-  const jurosCentavos = dividirArredondando(centavos * 33 * diasAtraso, 100000);
-
-  return {
-    multa: multaCentavos / 100,
-    juros: jurosCentavos / 100,
-  };
+  return { multa: emReais(multa), juros: emReais(juros) };
 }
 
-module.exports = { calcularConsumo, calcularEncargos };
+/**
+ * RF13–RF14: monta a fatura completa do morador.
+ */
+function gerarFatura(dados) {
+  if (dados === null || typeof dados !== 'object') {
+    throw new TypeError('dados deve ser um objeto');
+  }
+  const { nome, leituraAnterior, leituraAtual, vencimento, pagamento } = dados;
+
+  const consumo = calcularConsumo(leituraAnterior, leituraAtual);
+  const valorAgua = calcularTarifa(consumo);
+
+  let multa = 0;
+  let juros = 0;
+  if (pagamento !== undefined && pagamento !== null) {
+    ({ multa, juros } = calcularEncargos(valorAgua, vencimento, pagamento));
+  }
+
+  const total = emReais(
+    Math.round(valorAgua * 100) + Math.round(multa * 100) + Math.round(juros * 100)
+  );
+
+  return { nome, consumo, valorAgua, multa, juros, total };
+}
+
+module.exports = { calcularConsumo, calcularTarifa, calcularEncargos, gerarFatura };
