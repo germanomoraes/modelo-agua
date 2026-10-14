@@ -1,6 +1,6 @@
 # Registro do uso da IA
 
-**Dupla:** [nomes]
+**Dupla:** [Ronald e Germano ]
 **Atividade:** Código da IA sob inspeção: Fatura de Água da Associação Comunitária
 **Ferramenta(s) usada(s):** [ex.: ChatGPT, Claude, Gemini, Copilot; indique a versão ou o plano, se souber]
 
@@ -10,17 +10,22 @@
 
 ## Prompt 1
 
-**Data:** [dd/mm/aaaa]
+**Data:** [14/10/2026]
 
 **Prompt:**
 
 ```
-[cole aqui o texto exato que você enviou]
+[diante disso acima , Implemente em JavaScript (Node.js), no formato CommonJS, as duas  funções( calcularConsumo e calcularEncargos
+descritas na especificação abaixo, completas e prontas para uso.
+
+[conteúdo do requisitos.md]]
 ```
 
-**Resumo da resposta:** [o que a IA respondeu, em 2 ou 3 linhas]
+**Resumo da resposta:** [Usei esse prompt para que a IA implementasse calcularConsumo e calcularEncargos a partir do requisitos.md (RF01 a RF12), obtendo funções completas e prontas para uso na atividade de QA. Pedi só duas funções para manter o código focado e testável, cobrindo os casos de borda: volta do hidrômetro, vencimento em fim de semana, multa, juros e arredondamento. O resultado serve de base para criar e validar os testes e documentar o processo no prompts.md.]
 
-**O que fiz com isso:** [usei o código? testei? corrigi? descartei por quê?]
+**O que fiz com isso:** [diga uma frase de porque usei esse codigo
+
+Usei esse prompt para que a IA gerasse calcularConsumo e calcularEncargos a partir do requisitos.md, de modo que eu tivesse uma base pronta para testar e validar na atividade de QA.]
 
 ---
 
