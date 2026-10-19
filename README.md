@@ -138,23 +138,23 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 | # | Necessidade real (depoimento) | O que a especificação diz | O código atende? | Característica da ISO/IEC 25010 envolvida |
 |---|---|---|---|---|
-| 1 | [ ] | [ ] | [ ] | [ ] |
-| 2 | [ ] | [ ] | [ ] | [ ] |
-| 3 | [ ] | [ ] | [ ] | [ ] |
-| 4 | [ ] | [ ] | [ ] | [ ] |
-| 5 | [ ] | [ ] | [ ] | [ ] |
+| 1 | Hidrômetro trocado recomeça do zero. É diferente de "dar a volta", pois "dar a volta" é quando o mesmo aparelho atinge o limite máximo (9999) e zera naturalmente, enquanto a troca significa que um equipamento totalmente novo, zerado, foi instalado no lugar do antigo quebrado. | RF03: leitura atual menor que a anterior significa volta do hidrômetro. | Não. Com leitura anterior 5000 e atual 3, calcula 5.003 m³ e cobra R$ 15.734,95. | Adequação funcional (Acurácia/Corretude) |
+| 2 | Leitura em branco: quando a casa está fechada ou tem cachorro, o Toinho não consegue ler e deixa o campo em branco. Nesses casos, a associação cobra a média dos últimos três meses. | RF01: leituras são inteiros de 0 a 9999. Não prevê leitura faltando nem média. | Não. Com leitura `null`, lança `RangeError` e não gera fatura; também não recebe o histórico para calcular a média. | Adequação funcional (Completude) |
+| 3 | Feriados: a sede física da associação, onde ocorrem os pagamentos, só funciona em dias úteis, por isso é impossível pagar presencialmente no dia do feriado. | RF09: só trata sábado e domingo. | Não. Vencimento na sexta 25/12 (Natal), pago na segunda 28/12: cobra multa de R$ 2,00 e juros de R$ 0,10 sobre R$ 100. | Adequação funcional (Completude) |
+| 4 | Tarifa social: as famílias cadastradas no Cadastro Único pagam apenas a metade da taxa mínima (R$ 7,50), enquanto as demais pagam R$ 15,00. | RF04: taxa mínima fixa de R$ 15,00. | Não. A taxa mínima é uma constante no código e `calcularTarifa` só recebe o consumo, sem como informar a tarifa social. | Adequação funcional (Completude) |
+| 5 | CPF: a planilha atual expõe os CPFs de todos os moradores no grupo de WhatsApp da diretoria, ferindo a privacidade. | Não fala de dados pessoais nem de privacidade. | Parcialmente. O código ignora campos extras como CPF e a fatura devolve só 6 campos, mas não há requisito nem mecanismo de proteção desses dados. | Segurança (Confidencialidade) |
 
 ### 3.2 Requisitos revisados
 
-*Reescrevam os requisitos que precisam mudar e criem os que faltam (ex.: "RF03 (revisado): ...", "RF15 (novo): ..."). Não é preciso implementar.*
-
-[escrevam aqui]
+*   **RF03 (revisado):** Se a leitura atual for menor que a anterior, considera-se volta do hidrômetro, EXCETO quando houver o registro apontando a troca do equipamento. Nesse caso (troca de hidrômetro), o consumo a ser cobrado é o valor exato da leitura atual.
+*   **RF15 (novo):** Em caso de leitura em branco (quando for impossível realizar a medição no mês), o sistema deve calcular o consumo cobrado com base na média de consumo dos últimos três meses daquela mesma residência.
+*   **RF16 (novo):** Se a data de vencimento cair em um final de semana (sábado ou domingo) ou em um feriado (nacional ou municipal), o pagamento poderá ser efetuado até o próximo dia útil sem a cobrança de multa ou juros de mora.
+*   **RF17 (novo):** Famílias vinculadas ao Cadastro Único possuem direito à Tarifa Social, que altera o valor da taxa mínima (consumo de 0 a 10 m³) para R$ 7,50. O excedente de consumo segue os valores normais estabelecidos.
+*   **RF18 (novo):** Para garantir a proteção de dados, a fatura gerada e as planilhas de relatórios internos não devem conter CPFs ou documentos pessoais expostos em texto pleno, nem devem ser veiculadas em aplicativos de mensagens que violem a privacidade dos moradores.
 
 ### 3.3 Reflexão
 
-*O código estava errado ou a especificação estava errada? Os testes da Parte 2 encontrariam essas divergências? Por quê?*
-
-[escrevam aqui]
+A falha principal não foi do código gerado pela IA, mas sim da **especificação original** (`requisitos.md`), que era incompleta, pobre e distante da realidade operacional da associação. Os testes da Parte 2 de forma alguma teriam encontrado essas divergências. O motivo disso é que testes de código servem para realizar uma atividade de *Verificação* — atestar se o software foi construído seguindo fielmente as regras escritas no documento. O código gerado "gabaritou" todos os testes porque obedeceu perfeitamente à especificação. A divergência só surgiu na etapa de *Validação* (Parte 3), que é onde se descobre que as regras do papel não serviam para as necessidades do mundo real. O software estava perfeitamente desenvolvido para a especificação errada.
 
 ## Parte 4: o código à luz da ISO/IEC 25010
 
