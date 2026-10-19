@@ -45,7 +45,7 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 | Integrante | Funções sob sua responsabilidade |
 |---|---|
 | Rony | calcularConsumo e calcularEncargos |
-| [estudante B] | calcularTarifa e gerarFatura |
+| Germano | calcularTarifa e gerarFatura |
 
 ### 2.2 Casos de teste
 
@@ -74,9 +74,24 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 | CE11 | calcularEncargos | RF10 | (100, 2028-02-28, 2028-03-01) | {2, 0.07} | {2, 0.07} | Sim |
 | CE12 | calcularEncargos | RF09 | (100, 2026-10-16, 2026-10-17) | {2, 0.03} | {2, 0.03} | Sim |
 | CE13 | calcularEncargos | RF10 | (0, 2026-10-15, 2026-10-20) | {0, 0} | {0, 0} | Sim |
-| [estudante B] | calcularTarifa e gerarFatura | [ ] | [ ] | [ ] | [ ] | [ ] |
+ 
+ CT01 | calcularTarifa | RF04 | 0 | 15,00 | 15 | Sim |
+| CT02 | calcularTarifa | RF04 | 10 | 15,00 | 15 | Sim |
+| CT03 | calcularTarifa | RF05 | 11 | 17,35 | 17.35 | Sim |
+| CT04 | calcularTarifa | RF05 | 20 | 38,50 | 38.5 | Sim |
+| CT05 | calcularTarifa | RF06 | 21 | 41,65 | 41.65 | Sim |
+| CT06 | calcularTarifa | RF06 | 22 | 44,80 | 44.8 | Sim |
+| CT07 | calcularTarifa | RF04 (lacuna) | -1 | lança erro | RangeError | Sim |
+| CT08 | calcularTarifa | RF07 (lacuna) | 2.5 | lança erro | RangeError | Sim |
+| GF01 | gerarFatura | RF13, RF14 | leituras 100 e 130, sem pagamento | consumo 30, valorAgua 70, total 70 | igual ao esperado | Sim |
+| GF02 | gerarFatura | RF08, RF14 | leituras 100 e 130, pagamento em dia | consumo 30, valorAgua 70, total 70 | igual ao esperado | Sim |
+| GF03 | gerarFatura | RF10, RF11, RF14 | leituras 100 e 130, 1 dia de atraso | multa 1,40, juros 0,02, total 71,42 | igual ao esperado | Sim |
+| GF04 | gerarFatura | RF03 | leituras 9990 e 10, sem pagamento | consumo 20, valorAgua 38,50, total 38,50 | igual ao esperado | Sim |
+| GF05 | gerarFatura | RF13 (lacuna) | pagamento "" | lança erro | TypeError | Sim |
 
 **Resultado:** nas funções do Rony, 0 de 21 testes falharam no código original. Total da dupla: [X] de [Y] testes falharam no código original.
+
+**Resultado:** 0 de 34 testes da dupla falharam no código original (21 do Rony e 13 do Germano). Os 2 exemplos (EX01 e EX02) também passaram.
 
 ### 2.3 Revisão cruzada dos testes
 
@@ -85,7 +100,7 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 | Revisor | O que encontrou nos testes do colega | O que mudou |
 |---|---|---|
 | Rony | [ ] | [ ] |
-| [estudante B] | [ ] | [ ] |
+| Germano | [ ] | [ ] |
 
 ### 2.4 Defeitos encontrados
 
@@ -93,17 +108,23 @@ Funções do Rony (calcularConsumo e calcularEncargos): nenhum defeito encontrad
 
 | # | Função | Defeito (causa no código) | Falha (sintoma) | Requisito violado |
 |---|---|---|---|---|
-| D1 | [estudante B: preencher, se houver] | [ ] | [ ] | [ ] |
+Funções do Germano (calcularTarifa e gerarFatura): nenhum defeito encontrado nos casos executados. Os 13 testes passaram no código original. As lacunas da especificação (consumo negativo ou decimal, `pagamento` vazio) foram tratadas como decisões na seção 2.5, e não como defeitos.
 
 ### 2.5 Correções
 
 Funções do Rony: nenhum defeito exigiu correção em calcularConsumo e calcularEncargos. Decisões da dupla sobre as lacunas da especificação:
 
+Funções do Germano: nenhum defeito exigiu correção em calcularTarifa e gerarFatura. Decisões da dupla sobre as lacunas da especificação:
+
+- **Consumo negativo ou decimal em `calcularTarifa`:** mantém-se o erro lançado pela IA (RangeError). Justificativa: o consumo vem do hidrômetro em m³ inteiros, então um valor assim indica erro de leitura, e cobrar um valor errado seria pior que avisar.
+- **`pagamento` como texto vazio em `gerarFatura`:** mantém-se o erro (TypeError). Justificativa: o RF13 fala em "não informado", e um texto vazio é um dado inválido, não ausência de dado.
+- **`nome` sem validação:** limitação aceita, pois a especificação não define regras para o nome.
+
 - **Entradas inválidas** (leitura negativa, decimal ou acima de 9999; valor ou data inválidos): mantém-se o comportamento da IA, que lança erro. Justificativa: devolver um valor silencioso geraria cobrança errada ao morador, e um erro explícito evidencia o problema de leitura ou digitação.
 - **`pagamento` como string vazia ou data inválida:** lança erro (mantido).
 - **Feriados:** não tratados. Fica como limitação conhecida, pois a especificação só prevê sábado e domingo (RF09).
 
-[estudante B: correções e decisões de calcularTarifa e gerarFatura]
+Germano : correções e decisões de calcularTarifa e gerarFatura]
 
 ### 2.6 Os testes da IA
 
@@ -172,13 +193,13 @@ Funções do Rony: nenhum defeito exigiu correção em calcularConsumo e calcula
 **Reflexão final (1 parágrafo por integrante):**
 
 - **Rony:** *Como você passaria a usar IA para gerar código depois desta atividade?*
-- **[estudante B]:** *Idem.*
+- **Germano:** *Idem.*
 
 ## Parte 7: divisão do trabalho
 
 | Parte | Responsável principal | Participação do outro integrante |
 |---|---|---|
 | Parte 1 | Rony | [ ] |
-| Parte 2 | Rony (calcularConsumo e calcularEncargos) e [estudante B] (calcularTarifa e gerarFatura) | [ ] |
+| Parte 2 | Rony (calcularConsumo e calcularEncargos) e Germano (calcularTarifa e gerarFatura) | [ ] |
 | Parte 3 | [ ] | [ ] |
 | Partes 4 a 6 | [ ] | [ ] |
