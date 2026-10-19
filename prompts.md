@@ -122,7 +122,16 @@ O resultado foi um arquivo src/agua.js com quatro funções (calcularConsumo, ca
 
 ## Prompt 3
 
-(reservado para o prompt dos testes gerados pela IA, Parte 2.6; ainda não feito)
+## Prompt 3: Geração de testes a partir do próprio código (Parte 2.6)
+**Objetivo:** Ver o que a IA faz quando testa um código tendo apenas o próprio código como base, sem conhecer os requisitos.
+
+**Resumo da resposta da IA:**
+A IA gerou 14 casos de teste usando `node:test` e `node:assert/strict`, cobrindo todas as quatro funções (calcularConsumo, calcularTarifa, calcularEncargos e gerarFatura). Os resultados esperados nos testes basearam-se inteiramente na lógica que já estava escrita no código (ex: o teste da volta do hidrômetro esperava que o cálculo cobrasse o valor de volta, sem questionar se era uma troca de hidrômetro).
+
+**O que fizemos com a resposta:**
+Criamos o arquivo `evidencias/testes-gerados-pela-ia.js` e colamos o código gerado. Rodamos com `node --test` e confirmamos que todos os 14 testes passaram. Usamos esse resultado para preencher as conclusões da seção 2.6 no `README.md`, evidenciando o viés de confirmação da IA.
+
+**Total do balanço:** 10
 
 ---
 
