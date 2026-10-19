@@ -59,7 +59,41 @@ test("CC08: leitura acima de 9999 lança erro", () => {
 });
 
 // ===== Testes de calcularTarifa (mínimo de 5) =====
-// Responsável: colega (escrever aqui)
+// Responsável: Germano 
+
+test("CT01: consumo zero paga a taxa mínima", () => {
+  assert.equal(calcularTarifa(0), 15); 
+});
+
+test("CT02: fronteira da 1ª faixa (10 m³)", () => {
+  assert.equal(calcularTarifa(10), 15); 
+});
+
+test("CT03: primeiro m³ da 2ª faixa (11 m³)", () => {
+  assert.equal(calcularTarifa(11), 17.35); 
+});
+
+test("CT04: fronteira da 2ª faixa (20 m³)", () => {
+  assert.equal(calcularTarifa(20), 38.5); 
+});
+
+test("CT05: primeiro m³ da 3ª faixa (21 m³)", () => {
+  assert.equal(calcularTarifa(21), 41.65); 
+});
+
+test("CT06: exemplo da especificação (22 m³)", () => {
+  assert.equal(calcularTarifa(22), 44.8);
+});
+
+// CT07 e CT08: a especificação não define entradas inválidas.
+// Decisão da dupla: lançar erro (igual ao calcularConsumo).
+test("CT07: consumo negativo lança erro", () => {
+  assert.throws(() => calcularTarifa(-1));
+});
+
+test("CT08: consumo decimal lança erro", () => {
+  assert.throws(() => calcularTarifa(2.5));
+});
 
 // ===== Testes de calcularEncargos (mínimo de 5) =====
 // Responsável: Rony
@@ -117,6 +151,40 @@ test("CE13: valor zero com atraso não gera encargos", () => {
 });
 
 // ===== Testes de gerarFatura (mínimo de 5) =====
-// Responsável: colega (escrever aqui)
+// Responsável: Germano 
 
-// Pense em: valores de fronteira, arredondamento, datas, combinações de regras e entradas inválidas.
+test("GF01: sem pagamento, fatura sem encargos", () => {
+  assert.deepEqual(
+    gerarFatura({ nome: "Ana", leituraAnterior: 100, leituraAtual: 130, vencimento: "2026-10-15" }),
+    { nome: "Ana", consumo: 30, valorAgua: 70, multa: 0, juros: 0, total: 70 }
+  );
+});
+
+test("GF02: pagamento em dia, sem encargos", () => {
+  assert.deepEqual(
+    gerarFatura({ nome: "Ana", leituraAnterior: 100, leituraAtual: 130, vencimento: "2026-10-15", pagamento: "2026-10-15" }),
+    { nome: "Ana", consumo: 30, valorAgua: 70, multa: 0, juros: 0, total: 70 }
+  );
+});
+
+test("GF03: pagamento com 1 dia de atraso", () => {
+  assert.deepEqual(
+    gerarFatura({ nome: "Ana", leituraAnterior: 100, leituraAtual: 130, vencimento: "2026-10-15", pagamento: "2026-10-16" }),
+    { nome: "Ana", consumo: 30, valorAgua: 70, multa: 1.4, juros: 0.02, total: 71.42 }
+  );
+});
+
+test("GF04: hidrômetro que deu a volta (9990 -> 10)", () => {
+  assert.deepEqual(
+    gerarFatura({ nome: "Ana", leituraAnterior: 9990, leituraAtual: 10, vencimento: "2026-10-15" }),
+    { nome: "Ana", consumo: 20, valorAgua: 38.5, multa: 0, juros: 0, total: 38.5 }
+  );
+});
+
+// GF05: a especificação não diz o que fazer com pagamento vazio.
+// Decisão da dupla: lançar erro.
+test("GF05: pagamento como texto vazio lança erro", () => {
+  assert.throws(() =>
+    gerarFatura({ nome: "Ana", leituraAnterior: 100, leituraAtual: 130, vencimento: "2026-10-15", pagamento: "" })
+  );
+});
