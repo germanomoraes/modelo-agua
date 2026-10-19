@@ -124,11 +124,12 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 *Peçam à IA que gere testes para o código que ela mesma escreveu (registrem o prompt). Salvem os testes em `evidencias/testes-gerados-pela-ia.js` e rodem contra o código **original** com `node --test evidencias/testes-gerados-pela-ia.js`.*
 
-- **Quantos testes a IA gerou?** [ ]
-- **Quantos dos defeitos encontrados pela dupla os testes da IA detectaram?** [ ]
-- **Por que isso aconteceu?** *(de onde a IA tira o "resultado esperado" quando gera testes a partir do próprio código?)*
+### 2.6 Os testes da IA
 
-[escrevam aqui]
+- **Quantos testes a IA gerou?** 14 testes.
+- **Quantos dos defeitos encontrados pela dupla os testes da IA detectaram?** 0 (Zero). Os testes da IA não detectaram nenhuma das divergências reais do depoimento (como a tarifa social, a troca de hidrômetro que cobra milhares de reais indevidos ou a questão dos feriados). Todos os 14 testes gerados pela IA passaram perfeitamente.
+- **Por que isso aconteceu?** Isso aconteceu por causa do viés de confirmação (*echo chamber*). A IA tira o "resultado esperado" da própria lógica interna do código que ela leu. Como ela não leu o `requisitos.md` (e muito menos o depoimento real do cliente), ela assume que o código atual é a "verdade absoluta". Se o código diz que uma leitura menor significa que o hidrômetro "deu a volta", a IA cria um teste esperando que o sistema faça exatamente essa cobrança alta. Testes gerados a partir do código servem apenas para provar que o código faz o que ele já faz, mas são inúteis para descobrir se a regra de negócio implementada está correta para o mundo real.
+
 
 ## Parte 3: validação
 
