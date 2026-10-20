@@ -171,11 +171,11 @@ A falha principal não foi do código gerado pela IA, mas sim da **especificaç�
 
 ## Parte 5: garantia da qualidade (QA)
 
-*Proponham três práticas de processo para uma equipe que usa IA para gerar código, cada uma ligada a um defeito ou divergência que vocês encontraram.*
+1. **Validação de Requisitos com Usuários Finais:** Teria evitado a cobrança absurda de R$ 15.734,95 na troca de hidrômetro, o erro de multar em dias de feriado e a falta da tarifa social (divergências 1, 3 e 4 da 3.1). Se a equipe tivesse validado as regras com quem opera o sistema de verdade (Seu Raimundo e Toinho) antes de mandar o `requisitos.md` para a IA, a especificação já contemplaria a realidade.
 
-1. [prática]: [o que teria evitado]
-2. [prática]: [o que teria evitado]
-3. [prática]: [o que teria evitado]
+2. **Testes de Aceitação baseados no Mundo Real (UAT):** Teria evitado a "ilusão de perfeição" em que todos os 36 testes da Parte 2 passaram sem apontar nenhum defeito (divergências 1 a 4 da 3.1). Testes escritos a partir da especificação só encontram erros do código, não erros da própria especificação: eles passaram porque verificavam se o código obedecia a um papel incompleto. Se os cenários de teste incluíssem situações reais (por exemplo, "o que fazer se o cachorro estiver solto e a leitura vier em branco?"), as divergências teriam sido detectadas.
+
+3. **Revisão Humana (Code Review) focada em Suposições Ocultas:** Poderia ter evitado que a IA tomasse decisões sozinha e sem avisar, como abortar a fatura inteira com um `RangeError` ao receber uma leitura vazia (divergência 2) ou assumir silenciosamente que feriados não existem (divergência 3). Um revisor humano treinado para buscar "o que a IA preencheu nas lacunas" teria boa chance de barrar esse código antes da produção.
 
 ## Parte 6: o que a IA errou
 
