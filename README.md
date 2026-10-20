@@ -157,17 +157,17 @@ Para rodar os testes da dupla: `npm test` (Node.js 18 ou superior).
 
 A falha principal não foi do código gerado pela IA, mas sim da **especificação original** (`requisitos.md`), que era incompleta, pobre e distante da realidade operacional da associação. Os testes da Parte 2 de forma alguma teriam encontrado essas divergências. O motivo disso é que testes de código servem para realizar uma atividade de *Verificação* — atestar se o software foi construído seguindo fielmente as regras escritas no documento. O código gerado "gabaritou" todos os testes porque obedeceu perfeitamente à especificação. A divergência só surgiu na etapa de *Validação* (Parte 3), que é onde se descobre que as regras do papel não serviam para as necessidades do mundo real. O software estava perfeitamente desenvolvido para a especificação errada.
 
-## Parte 4: o código à luz da ISO/IEC 25010
 
-*Avaliem o código **original** da IA, com evidências (trechos de código, testes que falharam).*
+## Parte 4: o código à luz da ISO/IEC 25010
 
 | Característica | Subcaracterística | Avaliação | Evidência |
 |---|---|---|---|
-| Adequação funcional | [ ] | [ ] | [ ] |
-| Confiabilidade | [ ] | [ ] | [ ] |
-| Manutenibilidade | [ ] | [ ] | [ ] |
-| Capacidade de interação (2023) | [ ] | [ ] | [ ] |
-| Segurança (*security*) ou *safety* (2023) | [ ] | [ ] | [ ] |
+| Adequação funcional | Corretude e completude funcional | Parcial. Calcula certo o que a especificação pede, mas cobra um valor absurdo quando o hidrômetro é trocado. | Linhas 60 a 63 do `src/agua.js`: leitura atual menor que a anterior vira "volta". Com anterior 5000 e atual 3, `gerarFatura` devolve consumo 5003 e valorAgua R$ 15.734,95 (`evidencias/demonstracao-divergencias.js`). Linhas 99 a 102: só sábado e domingo prorrogam, sem feriados. Linha 15: taxa mínima fixa, sem tarifa social. |
+| Confiabilidade | Ausência de falhas e tolerância a falhas | Parcial. Valida leituras e datas com erro claro, mas aborta a fatura inteira quando a leitura está em branco. | Linhas 23 a 27 e 30 a 42: valida leituras e datas e lança erro claro. Linha 129: com leitura `null` a fatura inteira é abortada (`RangeError`), sem alternativa. Linhas 134 a 136: `vencimento` não é validado quando não há `pagamento`. |
+| Manutenibilidade | Modularidade, modificabilidade e testabilidade | Boa, com ressalva. Funções pequenas e fáceis de testar, mas tarifa social e feriados exigiriam mudar as assinaturas das funções. | Linhas 11 a 21: constantes com nome. Funções pequenas, com o requisito (RF) comentado em cada uma. Funções puras e exportadas: 36 testes escritos sem alterar o código. Mas tarifa social e feriados exigiriam mudar as assinaturas das funções. |
+| Capacidade de interação (2023) | Autodescritividade e assistência ao usuário | Fraca. A fatura só devolve os totais, sem detalhe por faixa nem histórico, e as mensagens de erro são técnicas. | Linha 142: a fatura devolve só os totais, sem detalhe por faixa nem histórico. Mensagens de erro técnicas (ex.: "deve ser um inteiro entre 0 e 9999"). |
+| Segurança (*security*) | Confidencialidade | Fraca. Não existe nenhum requisito nem mecanismo de proteção de dados pessoais, embora o CPF não seja repassado para a fatura. | Linhas 127 e 142: só os campos necessários são lidos e devolvidos, então um CPF passado junto não aparece na fatura (demonstração). Mas não há requisito nem mecanismo de proteção de dados pessoais, e não há registro de quem leu ou alterou o quê. |
+
 
 ## Parte 5: garantia da qualidade (QA)
 
