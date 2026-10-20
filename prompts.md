@@ -154,6 +154,20 @@ Pedi ajuda para fazer a Parte 4 (ISO/IEC 25010): o que dizer em cada caracterís
 
 ---
 
+## Prompt 12 (Germano)
+
+**Data:** [19/10/2026]
+
+**Prompt:**
+
+```
+Colei o meu rascunho da Parte 5 (três práticas de garantia da qualidade para uma equipe que usa IA) e perguntei se estava bom.
+```
+**Resumo da resposta:** A IA disse que as três práticas eram de processo e estavam ligadas a achados reais (a troca de hidrômetro com R$ 15.734,95, os 36 testes que passaram sem apontar defeito e o `RangeError` com leitura em branco). Sugeriu ligar cada prática ao número da divergência da tabela 3.1, acrescentar que testes feitos a partir da especificação só encontram erros do código e não da especificação, trocar "barraria" por uma frase menos absoluta e arrumar a formatação da lista. Depois me devolveu o texto com esses ajustes.
+
+**O que fiz com isso:** As três práticas foram escritas por mim, a partir do que a dupla encontrou nas Partes 2 e 3. Usei os ajustes sugeridos [diga quais: a numeração das divergências, a frase sobre erros do código e da especificação, a troca de "barraria"], conferi se a numeração batia com a minha tabela 3.1 e colei no README.
+
+
 ## Balanço final
 
 - **Total de prompts registrados:** 10 (2 do Ronald, 1 do teste gerado pela IA e 7 do Germano).
