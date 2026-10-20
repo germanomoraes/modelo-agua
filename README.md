@@ -188,7 +188,8 @@ A falha principal não foi do código gerado pela IA, mas sim da **especificaç�
 
 **Reflexão final (1 parágrafo por integrante):**
 
-- **Rony:** *(Escreva aqui como você passaria a usar IA para gerar código depois desta atividade. Exemplo: O que você não deixaria de revisar? Como faria os prompts?)*
+- **Rony:** * Antes dessa atividade eu usava a IA mais ou menos assim: pedia o código, via que rodava e seguia em frente. Aqui deu pra ver que isso é arriscado. O código dela veio bem feito e passou em todos os meus testes, mas ela decidiu várias coisas sozinha e não avisou, tipo o que fazer com leitura inválida, feriado ou fatura sem nome. Eu só percebi isso porque li o código com calma e escrevi os testes olhando a especificação, não o que a IA tinha feito. Também errei no começo, pedindo só duas funções em vez das quatro, e tive que refazer. Daqui pra frente vou escrever os testes antes de confiar no código e perguntar pra IA o que ela assumiu.
+
 - **Germano:** Na atividade, aprendi que a IA é excelente para escrever a lógica do código, mas falha quando a especificação é incompleta pos ela preenche as lacunas sozinhas, sem avisar, e não tem como adivinhar o contexto real de uso. Foi o que aconteceu com a troca de hidrômetro e com os feriados, que o código não tratava e que só apareceram no depoimento do Seu Raimundo. Por isso, vou mudar a forma como faço os prompts: em vez de apenas enviar a especificação e pedir o código, vou pedir primeiro que a IA atue como analista, com comandos como "Leia esta especificação e aponte o que está faltando para o uso real" e "Liste todas as suposições que você precisou fazer para escrever este código". Depois, vou conferir o resultado por conta própria, rodando o código e testando com casos reais, porque a própria IA também errou algumas afirmações durante este trabalho.
 
 ## Parte 7: divisão do trabalho
