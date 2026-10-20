@@ -167,6 +167,30 @@ Colei o meu rascunho da Parte 5 (três práticas de garantia da qualidade para u
 
 **O que fiz com isso:** As três práticas foram escritas por mim, a partir do que a dupla encontrou nas Partes 2 e 3. Usei os ajustes sugeridos [diga quais: a numeração das divergências, a frase sobre erros do código e da especificação, a troca de "barraria"], conferi se a numeração batia com a minha tabela 3.1 e colei no README.
 
+## Prompt 13 (Germano)
+
+**Data:** 19/10/2026
+
+**Prompt:**
+> Pedi ajuda para fazer a Parte 6 (o que a IA errou): quais itens escolher e como classificar. Depois AI fez a tabela para eu fazer no README.md
+
+**Resumo da resposta:** A IA listou itens candidatos com os fatos verificados rodando o código (volta do hidrômetro, dinheiro em centavos, erros para entradas inválidas, feriados ignorados, leitura em branco, o arredondamento de `valor * 100` e os erros da própria IA de apoio). Apontou que o exemplo "10.005 vira 10,00" do README da Parte 1 está errado (o resultado é 10,01; o caso que mostra o problema é 0,145). Montou a tabela com 4 itens e deixou para mim a escolha entre "Afirmação incorreta" e "Defeito" na linha 3.
+
+**O que fiz com isso:** Escolhi a classificação "Defeito" na linha 3 porque o código apresenta uma falha matemática real na fórmula ao arredondar certos decimais (como o caso do 0.145). Rodei o comando com 0.145 para conferir a evidência e avisei o Ronald sobre o erro no exemplo do README para ele corrigir na Parte 1.
+
+---
+
+## Prompt 14 (Germano)
+
+**Data:** 19/10/2026
+
+**Prompt:**
+> fiz um paragrafo da reflexão final e pedi uma susgetão depois pedi uma versão corrigida.
+
+**Resumo da resposta:** A IA disse que a ideia central estava boa (pedir à IA para listar as suposições antes de gerar o código) e sugeriu ligar a reflexão a um achado concreto, incluir a conferência humana e revisar o texto. Uma versão corrigida com as minhas ideias e dois acréscimos: a ligação com os achados e uma frase final sobre conferir sozinho.
+
+**O que fiz com isso:** Usei a versão sugerida pela IA como base (a opção equilibrada), adaptando com as minhas próprias palavras para focar na importância de criticar os requisitos primeiro e criar prompts exigindo que a IA nunca tome decisões silenciosas sem me consultar.
+
 
 ## Balanço final
 
