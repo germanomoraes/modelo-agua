@@ -181,14 +181,15 @@ A falha principal não foi do código gerado pela IA, mas sim da **especificaç�
 
 | # | O que a IA fez ou afirmou | Classificação | Evidência |
 |---|---|---|---|
-| 1 | [ ] | Defeito / Suposição não declarada / Afirmação incorreta / Correto | [ ] |
-| 2 | [ ] | [ ] | [ ] |
-| 3 | [ ] | [ ] | [ ] |
+| 1 | Tratou "leitura atual menor que a anterior" estritamente como volta do hidrômetro, obedecendo a regra cega. | Correto | Linhas 60 a 63 do `src/agua.js`. Segue rigorosamente o RF03 e o teste de `calcularConsumo(9990, 10)` retorna 20 corretamente. A falha no mundo real vem da especificação, não do código da IA. |
+| 2 | Lançou erros (`RangeError`, `TypeError`) para leitura negativa, decimal, texto e datas inválidas sem avisar. | Suposição não declarada | Linhas 23-27 e 30-42 do `src/agua.js`. A especificação não previa tratamento de erros, e a IA tomou essa decisão protetiva sozinha sem nos consultar. |
+| 3 | Afirmou que usar centavos evita erros de flutuante, mas a fórmula de conversão inicial dela também falha para certos decimais. | Defeito | Linha 111: `Math.round(valor * 100)`. Ao executar com valor `0.145`, o Node faz `0.145 * 100` que dá `14.499999999999998`, arredondando para 14 centavos em vez de 15. |
+| 4 | A própria IA que nos auxiliou na revisão errou ao analisar o nosso repositório e o código. | Afirmação incorreta | Registrado no `prompts.md` (Prompt 8): a IA disse que eram 31 testes (quando eram 36) e afirmou que o caso GF05 lançava `RangeError` (quando a execução prova que é `TypeError`). |
 
 **Reflexão final (1 parágrafo por integrante):**
 
-- **Rony:** *Como você passaria a usar IA para gerar código depois desta atividade?*
-- **Germano:** *Idem.*
+- **Rony:** *(Escreva aqui como você passaria a usar IA para gerar código depois desta atividade. Exemplo: O que você não deixaria de revisar? Como faria os prompts?)*
+- **Germano:** Na atividade, aprendi que a IA é excelente para escrever a lógica do código, mas falha quando a especificação é incompleta pos ela preenche as lacunas sozinhas, sem avisar, e não tem como adivinhar o contexto real de uso. Foi o que aconteceu com a troca de hidrômetro e com os feriados, que o código não tratava e que só apareceram no depoimento do Seu Raimundo. Por isso, vou mudar a forma como faço os prompts: em vez de apenas enviar a especificação e pedir o código, vou pedir primeiro que a IA atue como analista, com comandos como "Leia esta especificação e aponte o que está faltando para o uso real" e "Liste todas as suposições que você precisou fazer para escrever este código". Depois, vou conferir o resultado por conta própria, rodando o código e testando com casos reais, porque a própria IA também errou algumas afirmações durante este trabalho.
 
 ## Parte 7: divisão do trabalho
 
