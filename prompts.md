@@ -138,6 +138,22 @@
 
 ---
 
+## Prompt 11 (Germano)
+
+**Data:** [19/10/2026]
+
+**Prompt:**
+
+```
+Pedi ajuda para fazer a Parte 4 (ISO/IEC 25010): o que dizer em cada característica, com evidências do código original da IA.
+```
+
+**Resumo da resposta:** A IA releu o src/agua.js e montou os fatos de cada característica, com o número das linhas (por exemplo, linhas 60 a 63 para a volta do hidrômetro e linha 142 para o retorno só com os totais). Sugeriu um arquivo de demonstração das divergências do depoimento. Recusou escrever a coluna "Avaliação" e me deu opções prontas (A ou B) para escolher.
+
+**O que fiz com isso:** Criei evidencias/demonstracao-divergencias.js, escolhi as avaliações de cada linha ([diga se mudou alguma frase]) e colei a tabela no README. A IA apontou que a primeira versão tinha "Boa" em quatro linhas contradizendo as evidências, e eu corrigi para "Parcial", "Fraca" e "Boa, com ressalva".
+
+---
+
 ## Balanço final
 
 - **Total de prompts registrados:** 10 (2 do Ronald, 1 do teste gerado pela IA e 7 do Germano).
