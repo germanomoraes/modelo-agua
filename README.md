@@ -195,7 +195,7 @@ A falha principal não foi do código gerado pela IA, mas sim da **especificaç�
 
 | Parte | Responsável principal | Participação do outro integrante |
 |---|---|---|
-| Parte 1 | Rony | [ ] |
-| Parte 2 | Rony (calcularConsumo e calcularEncargos) e Germano (calcularTarifa e gerarFatura) | [ ] |
-| Parte 3 | [ ] | [ ] |
-| Partes 4 a 6 | [ ] | [ ] |
+| Parte 1 | Ronald | Germano analisou e documentou as decisões implícitas que a IA tomou sozinha. |
+| Parte 2 | Ronald (`calcularConsumo` e `calcularEncargos`) e Germano (`calcularTarifa` e `gerarFatura`) | Ambos realizaram a revisão cruzada detalhada dos casos de teste escritos pelo colega. |
+| Parte 3 | Ambos | Leitura e análise conjunta do depoimento do Seu Raimundo para identificar as divergências. |
+| Partes 4 a 6 | Germano | Ronald validou as evidências do código, revisou os achados e ambos escreveram os seus respetivos parágrafos na reflexão final. |
